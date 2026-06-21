@@ -94,22 +94,22 @@ LEFT JOIN attempts a ON tr.attemptid = a.id
 WHERE s.id = @StudentId
 GROUP BY s.id, u.firstname, u.lastname;";
         public const string DayOfWeekActivity = @"
-SELECT EXTRACT(DOW FROM a.startedat)::INT AS dayofweek,
-       COUNT(a.id) AS testscompleted,
-       COUNT(DISTINCT s.id) AS uniquescudents
-FROM attempts a
-JOIN students s ON a.studentid = s.id
-WHERE a.submittedat IS NOT NULL
-  AND (@DateFrom IS NULL OR a.startedat >= @DateFrom)
-  AND (@DateTo IS NULL OR a.startedat <= @DateTo)
-  AND (@GroupId IS NULL OR EXISTS (
-        SELECT 1 FROM student_groups sg 
-        WHERE sg.studentsid = s.id AND sg.groupsid = @GroupId
-  ))
--- [EXTRACT(DOW FROM ...): Функция извлекает часть даты.]
--- [DOW означает Day Of Week (день недели).]
-GROUP BY EXTRACT(DOW FROM a.startedat)
-ORDER BY dayofweek;";
+    SELECT 
+        TRIM(TO_CHAR(a.startedat, 'Day')) AS dayofweek,
+        COUNT(a.id) AS testscompleted,
+        COUNT(DISTINCT s.id) AS uniquescudents
+    FROM attempts a
+    JOIN students s ON a.studentid = s.id
+    WHERE a.submittedat IS NOT NULL
+      AND (@DateFrom::timestamp IS NULL OR a.startedat >= @DateFrom::timestamp)
+      AND (@DateTo::timestamp IS NULL OR a.startedat <= @DateTo::timestamp)
+      AND (@GroupId::int IS NULL OR s.id IN (
+            SELECT sg.studentsid 
+            FROM student_groups sg 
+            WHERE sg.groupsid = @GroupId::int
+      ))
+    GROUP BY TO_CHAR(a.startedat, 'Day'), EXTRACT(ISODOW FROM a.startedat)
+    ORDER BY EXTRACT(ISODOW FROM a.startedat);";
 
 
         public const string StudentTestResults = @"
@@ -171,7 +171,23 @@ WHERE (@DirectionId IS NULL OR g.directionid = @DirectionId)
   AND (@GroupId IS NULL OR sg.groupsid = @GroupId)
 GROUP BY s.id, u.firstname, u.lastname, c.name, g.name, d.name
 ORDER BY totalscore DESC LIMIT 50;";
-
+        public const string HourlyActivity = @"
+    SELECT EXTRACT(HOUR FROM a.startedat)::INT AS hour,
+           COUNT(a.id) AS testscompleted,
+           COUNT(DISTINCT s.id) AS uniquescudents
+    FROM attempts a
+    JOIN students s ON a.studentid = s.id
+    WHERE a.submittedat IS NOT NULL
+      AND (@DateFrom::timestamp IS NULL OR a.startedat >= @DateFrom::timestamp)
+      AND (@DateTo::timestamp IS NULL OR a.startedat <= @DateTo::timestamp)
+      AND (@GroupId::int IS NULL OR s.id IN (
+            SELECT sg.studentsid 
+            FROM student_groups sg 
+            WHERE sg.groupsid = @GroupId::int
+      ))
+    GROUP BY EXTRACT(HOUR FROM a.startedat)
+    ORDER BY hour;";
 
     }
+        
 }

@@ -129,6 +129,8 @@ namespace PerformanceAnalysis
 
             app.MapControllers();
 
+            
+
             app.Run();
         }
     }

@@ -31,11 +31,14 @@ public class JwtAuthService : IJwtAuthService
             throw new InvalidOperationException("Пользователь с таким логином или email уже существует");
         }
 
+        // ВРЕМЕННО ОТКЛЮЧАЕМ ПРОВЕРКУ ГРУППЫ ДЛЯ ПЕРВОГО ЮЗЕРА
+        /*
         var group = await _dbContext.Groups.FindAsync(new object[] { request.GroupId }, ct);
         if (group == null)
         {
             throw new InvalidOperationException("Группа не найдена");
         }
+        */
 
         var user = CreateUserFromRequest(request);
         _dbContext.Users.Add(user);
@@ -45,15 +48,17 @@ public class JwtAuthService : IJwtAuthService
         _dbContext.Students.Add(student);
         await _dbContext.SaveChangesAsync(ct);
 
+        // ВРЕМЕННО ОТКЛЮЧАЕМ СВЯЗЫВАНИЕ СТУДЕНТА С НЕСУЩЕСТВУЮЩЕЙ ГРУППОЙ
+        /*
         student.Groups.Add(group);
         await _dbContext.SaveChangesAsync(ct);
+        */
 
         var accessToken = GenerateAccessToken(user);
         var accessTokenExpiresAt = GetAccessTokenExpiration();
 
         return CreateAuthResponse(user, accessToken, accessTokenExpiresAt);
     }
-
     public async Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default)
     {
         var user = await _dbContext.Users

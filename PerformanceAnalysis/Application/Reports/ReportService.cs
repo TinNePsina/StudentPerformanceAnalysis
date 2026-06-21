@@ -10,6 +10,7 @@ using PerformanceAnalysis.Reports.StudentPassRate;
 using PerformanceAnalysis.Reports.StudentPassRateSummary;
 using PerformanceAnalysis.Reports.StudentRating;
 using PerformanceAnalysis.Reports.StudentTestResults;
+using PerformanceAnalysis.Reports.HourlyActivity; 
 using System.Data;
 
 namespace PerformanceAnalysis.Application.Reports
@@ -96,6 +97,15 @@ namespace PerformanceAnalysis.Application.Reports
         public async Task<IEnumerable<DayOfWeekActivityItem>> GetDayOfWeekActivityAsync(DayOfWeekActivityFilter filter)
         {
             return await _dapper.QueryAsync<DayOfWeekActivityItem>(ReportQueries.DayOfWeekActivity, filter);
+        }
+
+        //методдоп
+        public async Task<IEnumerable<HourlyActivityItem>> GetHourlyActivityAsync(HourlyActivityFilter filter)
+        {
+            return await _dapper.QueryAsync<HourlyActivityItem>(
+                PerformanceAnalysis.Infrastructure.Reports.ReportQueries.HourlyActivity, 
+                filter
+            );
         }
     }
 }

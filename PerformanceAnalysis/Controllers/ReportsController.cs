@@ -11,6 +11,7 @@ using PerformanceAnalysis.Reports.StudentPassRate;
 using PerformanceAnalysis.Reports.StudentPassRateSummary;
 using PerformanceAnalysis.Reports.StudentRating;
 using PerformanceAnalysis.Reports.StudentTestResults;
+using PerformanceAnalysis.Reports.HourlyActivity;
 
 namespace PerformanceAnalysis.Controllers
 {
@@ -140,6 +141,15 @@ namespace PerformanceAnalysis.Controllers
         /// Проверка доступа для отчётов с фильтрацией по StudentId.
         /// Менеджеры имеют доступ ко всем данным, студенты - только к своим.
         /// </summary>
+        /// <summary>
+        /// Мониторинг распределения активности пользователей по часам суток (Доп. функционал).
+        /// </summary>
+        [HttpGet("hourly-activity")]
+        public async Task<IActionResult> GetHourlyActivity([FromQuery] HourlyActivityFilter filter)
+        {
+            var result = await _reportService.GetHourlyActivityAsync(filter);
+            return Ok(result);
+        }
         private bool ValidateStudentAccess(int? studentId)
         {
             if (HttpContext.IsManager())

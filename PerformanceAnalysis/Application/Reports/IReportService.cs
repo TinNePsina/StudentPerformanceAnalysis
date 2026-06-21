@@ -6,6 +6,7 @@ using PerformanceAnalysis.Reports.StudentPassRate;
 using PerformanceAnalysis.Reports.StudentPassRateSummary;
 using PerformanceAnalysis.Reports.StudentRating;
 using PerformanceAnalysis.Reports.StudentTestResults;
+using PerformanceAnalysis.Reports.HourlyActivity;
 
 namespace PerformanceAnalysis.Application.Reports
 {
@@ -20,6 +21,7 @@ namespace PerformanceAnalysis.Application.Reports
         Task<IEnumerable<StudentPassRateItem>> GetStudentPassRateAsync(StudentPassRateFilter filter);
         Task<StudentPassRateSummaryItem?> GetStudentPassRateSummaryAsync(StudentPassRateSummaryFilter filter);
         Task<IEnumerable<DayOfWeekActivityItem>> GetDayOfWeekActivityAsync(DayOfWeekActivityFilter filter);
+        Task<IEnumerable<HourlyActivityItem>> GetHourlyActivityAsync(HourlyActivityFilter filter);
 
     }
 }
